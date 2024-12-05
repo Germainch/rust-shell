@@ -17,7 +17,7 @@ fn main() {
 }
 
 fn handle_command(command: &str) {
-    match command {
+    match command.trim().to_lowercase().as_str() {
         "exit 0" => std::process::exit(0),
         &_ => { println!("{}: command not found", command); }
     }
