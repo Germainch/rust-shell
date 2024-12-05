@@ -45,7 +45,7 @@ fn invalid_command(command: &str) {
 
 fn type_cmd(command: &str) {
     match command {
-        "type" | "echo" => println!("{} is a shell builtin", command),
+        "type" | "echo" | "exit"  => println!("{} is a shell builtin", command),
         &_ => {println!("{}: not found", command);}
     }
 }
