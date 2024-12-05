@@ -7,21 +7,23 @@ fn main() {
     let stdin = io::stdin();
     let mut input = String::new();
 
-    loop {
+    print!("$ ");
+    io::stdout().flush().unwrap();
+    while stdin.read_line(&mut input).is_ok() {
+        handle_command(input.trim());
+        input.clear();
         print!("$ ");
         io::stdout().flush().unwrap();
-        stdin.read_line(&mut input).unwrap();
-        handle_command(input.trim());
     }
 }
 
 fn handle_command(command: &str) {
-    if is_invalid(command) {
+    if !is_valid(command) {
         println!("{}: command not found", command);
     }
 }
 
-fn is_invalid(command: &str) -> bool {
-    let re = regex::Regex::new(r"invalid_command.*").unwrap();
-    re.is_match(command)
+fn is_valid(command: &str) -> bool {
+    /// todo implement valid functions
+    false
 }
