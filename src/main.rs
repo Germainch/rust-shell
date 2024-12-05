@@ -16,7 +16,7 @@ fn main() {
 
 fn handle_command(command: &str) {
     if is_invalid(command) {
-        print!("{}: command not found\n", command);
+        println!("{}: command not found\n", command);
     }
 }
 
