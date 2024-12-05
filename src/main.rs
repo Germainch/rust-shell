@@ -68,7 +68,7 @@ fn type_cmd(command: &str) {
         return;
     }
 
-    eprintln!("{}: command not found", command);
+    println!("{}: command not found", command);
 }
 
 fn find_command_in_path(command: &str) -> Vec<String> {
@@ -79,7 +79,7 @@ fn find_command_in_path(command: &str) -> Vec<String> {
     for path in paths {
         for entry in path.read_dir().expect("read_dir failed"){
             match entry {
-                Ok(e) => if e.file_name() == command {  found_paths.push(String::from(path.to_str().unwrap()) + "/" + command); },
+                Ok(e) => if e.file_name() == command {  found_paths.push(String::from(path.to_str().unwrap()) + "/" + command);},
                 Err(_) => {}
             }
         }
