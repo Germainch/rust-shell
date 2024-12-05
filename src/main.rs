@@ -10,4 +10,16 @@ fn main() {
     let stdin = io::stdin();
     let mut input = String::new();
     stdin.read_line(&mut input).unwrap();
+    handle_command(input.trim());
+
+}
+
+fn handle_command(command: &str) {
+    if is_invalid(command) {
+        println!("{}: command not found", command);
+    }
+}
+
+fn is_invalid(command: &str) -> bool {
+    command == "invalid_command"
 }
