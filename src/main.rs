@@ -3,7 +3,7 @@ use std::io::{self, Write};
 
 fn main() {
     // Uncomment this block to pass the first stage
-    print!("$ \n");
+    print!("$ ");
     io::stdout().flush().unwrap();
 
     // Wait for user input
@@ -17,6 +17,7 @@ fn main() {
 fn handle_command(command: &str) {
     if is_invalid(command) {
         println!("{}: command not found\n", command);
+        println!();
     }
 }
 
