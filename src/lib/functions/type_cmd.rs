@@ -15,7 +15,7 @@ pub fn type_cmd(command: &str) {
 
     if paths.len() > 0 {
         for path in paths {
-            println!("{}", path.trim());
+            println!("{} is {}",command,  path.trim());
             io::stdout().flush().unwrap();
         }
         return;
