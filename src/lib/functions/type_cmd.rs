@@ -1,4 +1,6 @@
 use std::env::{split_paths, var};
+use std::io;
+use std::io::Write;
 use crate::{BUILTINS};
 
 pub fn type_cmd(command: &str) {
@@ -14,6 +16,7 @@ pub fn type_cmd(command: &str) {
     if paths.len() > 0 {
         for path in paths {
             println!("{}", path.trim());
+            io::stdout().flush().unwrap();
         }
         return;
     }
