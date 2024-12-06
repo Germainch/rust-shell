@@ -1,6 +1,7 @@
 use std::env::{split_paths, var};
 use std::io;
 use std::io::Write;
+use std::process::Command;
 use crate::{BUILTINS};
 
 pub fn type_cmd(command: &str) {
@@ -11,19 +12,21 @@ pub fn type_cmd(command: &str) {
         return;
     }
 
-    let paths = find_command_in_path(command);
-
-    if paths.len() > 0 {
-        for path in paths {
-            println!("{} is {}",command,  path.trim());
-            io::stdout().flush().unwrap();
-        }
+    if let Some(path) = find_first_dir_path(&command) {
+        println!("{} is {}", command, path);
         return;
     }
 
     eprintln!("{}: command not found", command);
 }
 
+fn find_first_dir_path(command: &str) -> Option<String> {
+    let vec = find_command_in_path(command);
+    if vec.len() > 0 {
+        return Some(vec[0].to_string());
+    }
+    None
+}
 
 fn find_command_in_path(command: &str) -> Vec<String> {
     let line = var("PATH").unwrap();
@@ -33,7 +36,7 @@ fn find_command_in_path(command: &str) -> Vec<String> {
     for path in paths {
         for entry in path.read_dir().expect("read_dir failed"){
             match entry {
-                Ok(e) => if e.file_name() == command {  found_paths.push(String::from(path.to_str().unwrap()) + "/" + command.trim()); },
+                Ok(e) => if e.file_name() == command {  found_paths.push(String::from(path.to_str().unwrap()) + "/" + command); },
                 Err(_) => {}
             }
         }
