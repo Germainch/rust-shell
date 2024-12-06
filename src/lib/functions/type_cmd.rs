@@ -17,7 +17,7 @@ pub fn type_cmd(command: &str) {
         return;
     }
 
-    eprintln!("{}: command not found", command);
+    eprintln!("{}: not found", command);
 }
 
 fn find_first_dir_path(command: &str) -> Option<String> {
