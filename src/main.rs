@@ -80,7 +80,9 @@ fn handle_builtin(command: &str, args: Vec<&str>) {
 fn tokenize(input: &str) -> Vec<String> {
 
     // Regex to match shell-style tokens
-    let re = Regex::new(r#""([^"\\]*(?:\\.[^"\\]*)*)"|'([^'\\]*(?:\\.[^'\\]*)*)'|(\S+)"#).unwrap();
+    // let re = Regex::new(r#""([^"\\]*(?:\\.[^"\\]*)*)"|'([^'\\]*(?:\\.[^'\\]*)*)'|(\S+)"#).unwrap();
+    let re = Regex::new(r#""([^"\\]*(?:\\.[^"\\]*)*)"|'([^'\\]*(?:\\.[^'\\]*)*)'|((?:\\.|[^\\\s])+)"#).unwrap();
+
 
     let mut tokens = Vec::new();
 
@@ -93,10 +95,27 @@ fn tokenize(input: &str) -> Vec<String> {
             tokens.push(quoted_single.as_str().to_string());
         } else if let Some(unquoted) = cap.get(3) {
             // Unquoted token
-            tokens.push(unquoted.as_str().to_string());
+            tokens.push(unescape(unquoted.as_str()));
         }
     }
 
     tokens
 }
 
+
+// Function to unescape backslash-escaped sequences
+fn unescape(input: &str) -> String {
+    let mut result = String::new();
+    let mut chars = input.chars();
+    while let Some(c) = chars.next() {
+        if c == '\\' {
+            // Handle escaped character
+            if let Some(next_char) = chars.next() {
+                result.push(next_char);
+            }
+        } else {
+            result.push(c);
+        }
+    }
+    result
+}
