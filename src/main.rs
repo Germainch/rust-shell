@@ -81,7 +81,9 @@ fn tokenize(input: &str) -> Vec<String> {
 
     // Regex to match shell-style tokens
     // let re = Regex::new(r#""([^"\\]*(?:\\.[^"\\]*)*)"|'([^'\\]*(?:\\.[^'\\]*)*)'|(\S+)"#).unwrap();
-    let re = Regex::new(r#""([^"\\]*(?:\\.[^"\\]*)*)"|'([^'\\]*(?:\\.[^'\\]*)*)'|((?:\\.|[^\\\s])+)"#).unwrap();
+    // let re = Regex::new(r#""([^"\\]*(?:\\.[^"\\]*)*)"|'([^'\\]*(?:\\.[^'\\]*)*)'|((?:\\.|[^\\\s])+)"#).unwrap();
+    let re = Regex::new(r#""((?:\\.|[^"\\])*)"|'([^']*)'|((?:\\.|[^\\\s])+)"#).unwrap();
+
 
 
     let mut tokens = Vec::new();
