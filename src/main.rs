@@ -6,13 +6,14 @@ use std::io::{self, Write};
 use std::path::{Path, PathBuf};
 use std::env::*;
 use lib::functions::echo::echo;
+use crate::lib::functions::cd::cd;
 use crate::lib::functions::exit::exit;
 use crate::lib::functions::invalid_command::invalid_command;
 use crate::lib::functions::pwd::pwd;
 use crate::lib::functions::type_cmd::{find_binary, type_cmd};
 
 const PROMPT: &str = "$ ";
-const BUILTINS: [&str; 4] = ["echo", "type", "exit", "pwd"];
+const BUILTINS: [&str; 5] = ["echo", "type", "exit", "pwd", "cd"];
 
 /// main function
 fn main() {
@@ -67,6 +68,7 @@ fn handle_builtin(command: &str, args: Vec<&str>) {
         "echo" => echo(args.join(" ").as_str()),
         "type" => type_cmd(args.join(" ").as_str()),
         "pwd"  => pwd(),
+        "cd"   => cd(args.join(" ").as_str()),
         &_ => unreachable!() // error case if the command is not found in the builtins, should never happen
     }
 }
