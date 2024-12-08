@@ -1,3 +1,4 @@
+use std::error::Error;
 use crate::lib::functions::pwd::pwd;
 
 pub fn cd(input: &str) {
@@ -6,5 +7,5 @@ pub fn cd(input: &str) {
         std::env::set_current_dir(home).unwrap();
         return;
     }
-    std::env::set_current_dir(input).unwrap_or_else(|c| eprintln!("cd: {}: {}", input, c));
+    std::env::set_current_dir(input).unwrap_or_else(|c| eprintln!("cd: {}: {}", input, "No such file or directory"));
 }
