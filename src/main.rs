@@ -8,10 +8,11 @@ use std::env::*;
 use lib::functions::echo::echo;
 use crate::lib::functions::exit::exit;
 use crate::lib::functions::invalid_command::invalid_command;
+use crate::lib::functions::pwd::pwd;
 use crate::lib::functions::type_cmd::{find_binary, type_cmd};
 
 const PROMPT: &str = "$ ";
-const BUILTINS: [&str; 3] = ["echo", "type", "exit"];
+const BUILTINS: [&str; 4] = ["echo", "type", "exit", "pwd"];
 
 /// main function
 fn main() {
@@ -65,13 +66,14 @@ fn handle_builtin(command: &str, args: Vec<&str>) {
         "exit" => exit(),
         "echo" => echo(args.join(" ").as_str()),
         "type" => type_cmd(args.join(" ").as_str()),
+        "pwd"  => pwd(),
         &_ => unreachable!() // error case if the command is not found in the builtins, should never happen
     }
 }
 
 /// Tokenize the input string into a vector of strings
-/// each element of the vector is a token
-/// a token is a word separated by a space
+/// each element of the vector is a token.
+/// A token is a word separated by a space
 /// except when the word is between quotes
 fn tokenize(input: &str) -> Vec<String> {
 
