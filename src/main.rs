@@ -1,8 +1,14 @@
+mod lib;
+
 use std::fs::read_dir;
 #[allow(unused_imports)]
 use std::io::{self, Write};
 use std::path::{Path, PathBuf};
 use std::env::*;
+use crate::lib::functions::echo::echo;
+use crate::lib::functions::exit::exit;
+use crate::lib::functions::invalid_command::invalid_command;
+use crate::lib::functions::type_cmd::type_cmd;
 
 const PROMPT: &str = "$ ";
 const BUILTINS: [&str; 3] = ["echo", "type", "exit"];
@@ -37,52 +43,4 @@ fn handle_command(input: &str) {
     }
 }
 
-fn exit(){
-    std::process::exit(0);
-}
 
-fn echo(arg: &str) {
-    println!("{}", arg);
-}
-
-fn invalid_command(command: &str) {
-    eprintln!("{}: command not found", command);
-}
-
-
-/// the type command is used to determine the type of command
-fn type_cmd(command: &str) {
-
-    // check if the command is a shell builtin
-    if BUILTINS.contains(&command) {
-        println!("{} is a shell builtin", command);
-        return;
-    }
-
-    let paths = find_command_in_path(command);
-
-    if paths.len() > 0 {
-        for path in paths {
-            println!("{}", path);
-        }
-        return;
-    }
-
-    println!("{}: command not found", command);
-}
-
-fn find_command_in_path(command: &str) -> Vec<String> {
-    let line = var("PATH").unwrap();
-    let paths = split_paths(&line);
-    let mut found_paths = Vec::new();
-
-    for path in paths {
-        for entry in path.read_dir().expect("read_dir failed"){
-            match entry {
-                Ok(e) => if e.file_name() == command {  found_paths.push(String::from(path.to_str().unwrap()) + "/" + command);},
-                Err(_) => {}
-            }
-        }
-    }
-    found_paths
-}
