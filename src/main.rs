@@ -1,5 +1,5 @@
 mod lib;
-
+use regex::Regex;
 use std::fs::read_dir;
 #[allow(unused_imports)]
 use std::io::{self, Write};
@@ -8,7 +8,7 @@ use std::env::*;
 use lib::functions::echo::echo;
 use crate::lib::functions::exit::exit;
 use crate::lib::functions::invalid_command::invalid_command;
-use crate::lib::functions::type_cmd::{find_in_path, type_cmd};
+use crate::lib::functions::type_cmd::{find_binary, type_cmd};
 
 const PROMPT: &str = "$ ";
 const BUILTINS: [&str; 3] = ["echo", "type", "exit"];
@@ -35,19 +35,21 @@ fn main() {
 fn handle_command(input: &str) {
 
     // split the line received into a vector, with the command in the index 0
-    let tokens = input.split_whitespace().collect::<Vec<_>>();
-    let command = tokens[0]; // get the command
-    let args = tokens[1..].to_vec();
+    let tokens = tokenize(input);
+    let command = tokens[0].as_str(); // get the command
+    let args: Vec<&str> = tokens[1..].iter().map(|s| s.as_str()).collect();
+
 
     // check if the command is a shell builtin
     for builtin in BUILTINS {
         if command == builtin {
-            return handle_builtin(command, args);
+            handle_builtin(&command, args);
+            return;
         }
     }
 
     // check if the command is an executable found in the PATH and execute it
-    if let Some(path) = find_in_path(command) {
+    if let Some(path) = find_binary(command) {
         std::process::Command::new(path).args(args).status().expect("failed to execute process");
         return;
     }
@@ -63,8 +65,34 @@ fn handle_builtin(command: &str, args: Vec<&str>) {
         "exit" => exit(),
         "echo" => echo(args.join(" ").as_str()),
         "type" => type_cmd(args.join(" ").as_str()),
-        &_ => invalid_command(command) // error case if the command is not found in the builtins, should never happen
+        &_ => unreachable!() // error case if the command is not found in the builtins, should never happen
     }
 }
 
+/// Tokenize the input string into a vector of strings
+/// each element of the vector is a token
+/// a token is a word separated by a space
+/// except when the word is between quotes
+fn tokenize(input: &str) -> Vec<String> {
+
+    // Regex to match shell-style tokens
+    let re = Regex::new(r#""([^"\\]*(?:\\.[^"\\]*)*)"|'([^'\\]*(?:\\.[^'\\]*)*)'|(\S+)"#).unwrap();
+
+    let mut tokens = Vec::new();
+
+    for cap in re.captures_iter(input) {
+        if let Some(quoted_double) = cap.get(1) {
+            // Double-quoted token
+            tokens.push(quoted_double.as_str().to_string());
+        } else if let Some(quoted_single) = cap.get(2) {
+            // Single-quoted token
+            tokens.push(quoted_single.as_str().to_string());
+        } else if let Some(unquoted) = cap.get(3) {
+            // Unquoted token
+            tokens.push(unquoted.as_str().to_string());
+        }
+    }
+
+    tokens
+}
 
