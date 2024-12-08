@@ -4,6 +4,8 @@ use std::io::Write;
 use std::process::Command;
 use crate::{BUILTINS};
 
+
+/// Print the type of command
 pub fn type_cmd(command: &str) {
 
     // check if the command is a shell builtin
@@ -12,7 +14,8 @@ pub fn type_cmd(command: &str) {
         return;
     }
 
-    if let Some(path) = find_first_dir_path(&command) {
+    // check if the command is an executable found in the PATH
+    if let Some(path) = find_in_path(&command) {
         println!("{} is {}", command, path);
         return;
     }
@@ -20,26 +23,21 @@ pub fn type_cmd(command: &str) {
     eprintln!("{}: not found", command);
 }
 
-fn find_first_dir_path(command: &str) -> Option<String> {
-    let vec = find_command_in_path(command);
-    if vec.len() > 0 {
-        return Some(vec[0].to_string());
-    }
-    None
-}
 
-fn find_command_in_path(command: &str) -> Vec<String> {
+/// Find the path of a command in the PATH environment variable
+/// it returns the path of the command if found, None otherwise
+/// this function is used by the type_cmd function and the handle_command function to execute the command
+pub fn find_in_path(command: &str) -> Option<String> {
     let line = var("PATH").unwrap();
     let paths = split_paths(&line);
-    let mut found_paths = Vec::new();
 
     for path in paths {
         for entry in path.read_dir().expect("read_dir failed"){
             match entry {
-                Ok(e) => if e.file_name() == command {  found_paths.push(String::from(path.to_str().unwrap()) + "/" + command); },
+                Ok(e) => if e.file_name() == command { return Some(path.to_str()?.to_string() + "/" + command); },
                 Err(_) => {}
             }
         }
     }
-    found_paths
+    None
 }
