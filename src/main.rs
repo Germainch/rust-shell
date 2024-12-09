@@ -119,5 +119,6 @@ fn unescape(input: &str) -> String {
             result.push(c);
         }
     }
-    result
+    let test = result.split_ascii_whitespace().collect::<Vec<_>>().join("");
+    test
 }
