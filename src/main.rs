@@ -91,7 +91,7 @@ fn tokenize(input: &str) -> Vec<String> {
     for cap in re.captures_iter(input) {
         if let Some(quoted_double) = cap.get(1) {
             // Double-quoted token
-            tokens.push(quoted_double.as_str().to_string());
+            tokens.push(unescape(quoted_double.as_str()).to_string());
         } else if let Some(quoted_single) = cap.get(2) {
             // Single-quoted token
             tokens.push(quoted_single.as_str().to_string());
